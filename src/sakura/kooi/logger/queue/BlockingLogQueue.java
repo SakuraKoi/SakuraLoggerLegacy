@@ -9,6 +9,7 @@ public class BlockingLogQueue implements ILogQueue {
     public void log(String module, LogLevel level, String message) {
         for (String msg : message.split("\n")) {
             String formatted = SakuraLogger.getFormatter().format(level, module, msg);
+            if (formatted == null) continue;
             synchronized (lock) {
                 SakuraLogger.getWriter().write(level, module, formatted);
             }

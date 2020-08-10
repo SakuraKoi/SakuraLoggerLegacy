@@ -1,47 +1,46 @@
 package sakura.kooi.logger;
 
-import org.slf4j.helpers.MarkerIgnoringBase;
-import org.slf4j.helpers.MessageFormatter;
+import sakura.kooi.logger.utils.Formatter;
 import sakura.kooi.logger.utils.LoggerUtils;
 
-public class Logger extends MarkerIgnoringBase {
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentMap;
+
+public class Logger {
+    private static ConcurrentMap<String, Logger> loggerMap = new ConcurrentHashMap<>();
     private final String module;
+
     private Logger(final String module) {
         this.module = module;
     }
 
     public static Logger of(final String module) {
-        return new Logger(module);
+        return loggerMap.computeIfAbsent(module, Logger::new);
     }
 
     //region Basic logging
-    @Override
     public void trace(String s) {
-        if (isTraceEnabled())
+        if (SakuraLogger.isLogLevelEnabled(LogLevel.TRACE))
             log(LogLevel.TRACE, s);
     }
 
-    @Override
     public void debug(String s) {
-        if (isDebugEnabled())
+        if (SakuraLogger.isLogLevelEnabled(LogLevel.DEBUG))
             log(LogLevel.DEBUG, s);
     }
 
-    @Override
     public void info(String s) {
-        if (isInfoEnabled())
+        if (SakuraLogger.isLogLevelEnabled(LogLevel.INFO))
             log(LogLevel.INFO, s);
     }
 
-    @Override
     public void warn(String s) {
-        if (isWarnEnabled())
+        if (SakuraLogger.isLogLevelEnabled(LogLevel.WARN))
             log(LogLevel.WARN, s);
     }
 
-    @Override
     public void error(String s) {
-        if (isErrorEnabled())
+        if (SakuraLogger.isLogLevelEnabled(LogLevel.ERROR))
             log(LogLevel.ERROR, s);
     }
 
@@ -55,72 +54,67 @@ public class Logger extends MarkerIgnoringBase {
             log(LogLevel.CRIT, s);
     }
     //endregion
-
+    
     //region Array format
-    @Override
     public void trace(String s, Object... objects) {
-        if (isTraceEnabled())
-            trace(MessageFormatter.arrayFormat(s, objects).getMessage());
+        if (SakuraLogger.isLogLevelEnabled(LogLevel.TRACE))
+            trace(Formatter.arrayFormat(s, objects));
     }
 
-    @Override
     public void debug(String s, Object... objects) {
-        if (isDebugEnabled())
-            debug(MessageFormatter.arrayFormat(s, objects).getMessage());
+        if (SakuraLogger.isLogLevelEnabled(LogLevel.DEBUG))
+            debug(Formatter.arrayFormat(s, objects));
     }
 
-    @Override
     public void info(String s, Object... objects) {
-        if (isInfoEnabled())
-            info(MessageFormatter.arrayFormat(s, objects).getMessage());
+        if (SakuraLogger.isLogLevelEnabled(LogLevel.INFO))
+            info(Formatter.arrayFormat(s, objects));
     }
 
-    @Override
     public void warn(String s, Object... objects) {
-        if (isWarnEnabled())
-            warn(MessageFormatter.arrayFormat(s, objects).getMessage());
+        if (SakuraLogger.isLogLevelEnabled(LogLevel.WARN))
+            warn(Formatter.arrayFormat(s, objects));
     }
 
-    @Override
     public void error(String s, Object... objects) {
-        if (isErrorEnabled())
-            error(MessageFormatter.arrayFormat(s, objects).getMessage());
+        if (SakuraLogger.isLogLevelEnabled(LogLevel.ERROR))
+            error(Formatter.arrayFormat(s, objects));
     }
 
     public void crit(String s, Object... objects) {
         if (SakuraLogger.isLogLevelEnabled(LogLevel.CRIT))
-            crit(MessageFormatter.arrayFormat(s, objects).getMessage());
+            crit(Formatter.arrayFormat(s, objects));
     }
 
     public void success(String s, Object... objects) {
         if (SakuraLogger.isLogLevelEnabled(LogLevel.SUCC))
-            success(MessageFormatter.arrayFormat(s, objects).getMessage());
+            success(Formatter.arrayFormat(s, objects));
     }
-    //endregion
 
+    //endregion
     //region Exception only
     public void trace(Throwable throwable) {
-        if (isTraceEnabled())
+        if (SakuraLogger.isLogLevelEnabled(LogLevel.TRACE))
             trace(LoggerUtils.getStackTraceAsString(throwable));
     }
 
     public void debug(Throwable throwable) {
-        if (isDebugEnabled())
+        if (SakuraLogger.isLogLevelEnabled(LogLevel.DEBUG))
             debug(LoggerUtils.getStackTraceAsString(throwable));
     }
 
     public void info(Throwable throwable) {
-        if (isInfoEnabled())
+        if (SakuraLogger.isLogLevelEnabled(LogLevel.INFO))
             info(LoggerUtils.getStackTraceAsString(throwable));
     }
 
     public void warn(Throwable throwable) {
-        if (isWarnEnabled())
+        if (SakuraLogger.isLogLevelEnabled(LogLevel.WARN))
             warn(LoggerUtils.getStackTraceAsString(throwable));
     }
 
     public void error(Throwable throwable) {
-        if (isErrorEnabled())
+        if (SakuraLogger.isLogLevelEnabled(LogLevel.ERROR))
             error(LoggerUtils.getStackTraceAsString(throwable));
     }
 
@@ -128,69 +122,65 @@ public class Logger extends MarkerIgnoringBase {
         if (SakuraLogger.isLogLevelEnabled(LogLevel.CRIT))
             crit(LoggerUtils.getStackTraceAsString(throwable));
     }
+
     //endregion
 
     //region Exception format
-    @Override
     public void trace(String s, Throwable throwable) {
         if (throwable == null)
             trace(s);
-        else if (isTraceEnabled())
-            trace(MessageFormatter.format("{}\n{}", s, LoggerUtils.getStackTraceAsString(throwable)).getMessage());
+        else if (SakuraLogger.isLogLevelEnabled(LogLevel.TRACE))
+            trace(Formatter.format("{}\n{}", s, LoggerUtils.getStackTraceAsString(throwable)));
     }
 
-    @Override
     public void debug(String s, Throwable throwable) {
         if (throwable == null)
             debug(s);
-        else if (isDebugEnabled())
-            debug(MessageFormatter.format("{}\n{}", s, LoggerUtils.getStackTraceAsString(throwable)).getMessage());
+        else if (SakuraLogger.isLogLevelEnabled(LogLevel.DEBUG))
+            debug(Formatter.format("{}\n{}", s, LoggerUtils.getStackTraceAsString(throwable)));
     }
 
-    @Override
     public void info(String s, Throwable throwable) {
         if (throwable == null)
             info(s);
-        else if (isInfoEnabled())
-            info(MessageFormatter.format("{}\n{}", s, LoggerUtils.getStackTraceAsString(throwable)).getMessage());
+        else if (SakuraLogger.isLogLevelEnabled(LogLevel.INFO))
+            info(Formatter.format("{}\n{}", s, LoggerUtils.getStackTraceAsString(throwable)));
     }
 
-    @Override
     public void warn(String s, Throwable throwable) {
         if (throwable == null)
             warn(s);
-        else if (isWarnEnabled())
-            warn(MessageFormatter.format("{}\n{}", s, LoggerUtils.getStackTraceAsString(throwable)).getMessage());
+        else if (SakuraLogger.isLogLevelEnabled(LogLevel.WARN))
+            warn(Formatter.format("{}\n{}", s, LoggerUtils.getStackTraceAsString(throwable)));
     }
 
-    @Override
     public void error(String s, Throwable throwable) {
         if (throwable == null)
             error(s);
-        else if (isErrorEnabled())
-            error(MessageFormatter.format("{}\n{}", s, LoggerUtils.getStackTraceAsString(throwable)).getMessage());
+        else if (SakuraLogger.isLogLevelEnabled(LogLevel.ERROR))
+            error(Formatter.format("{}\n{}", s, LoggerUtils.getStackTraceAsString(throwable)));
     }
 
     public void crit(String s, Throwable throwable) {
         if (throwable == null)
             crit(s);
         else if (SakuraLogger.isLogLevelEnabled(LogLevel.CRIT))
-            crit(MessageFormatter.format("{}\n{}", s, LoggerUtils.getStackTraceAsString(throwable)).getMessage());
+            crit(Formatter.format("{}\n{}", s, LoggerUtils.getStackTraceAsString(throwable)));
     }
     //endregion
 
     //region Custom exception format
-    public void warnEx(String s, Throwable ex, Object... o) {
-        if (isWarnEnabled())
-            warn(MessageFormatter.arrayFormat(s, o).getMessage() + "\n"+ LoggerUtils.getStackTraceAsString(ex));
+    public void warn(String s, Throwable ex, Object... o) {
+        if (SakuraLogger.isLogLevelEnabled(LogLevel.WARN))
+            warn(Formatter.arrayFormat(s, o) + "\n" + LoggerUtils.getStackTraceAsString(ex));
     }
 
-    public void errorEx(String s, Throwable ex, Object... o) {
-        if (isErrorEnabled())
-            error(MessageFormatter.arrayFormat(s, o).getMessage() + "\n"+ LoggerUtils.getStackTraceAsString(ex));
+    public void error(String s, Throwable ex, Object... o) {
+        if (SakuraLogger.isLogLevelEnabled(LogLevel.ERROR))
+            error(Formatter.arrayFormat(s, o) + "\n" + LoggerUtils.getStackTraceAsString(ex));
     }
+
     //endregion
-
     //region Custom logLevel
     public void log(LogLevel logLevel, String s) {
         if (SakuraLogger.isLogLevelEnabled(logLevel))
@@ -199,7 +189,7 @@ public class Logger extends MarkerIgnoringBase {
 
     public void log(LogLevel logLevel, String s, Object... objects) {
         if (SakuraLogger.isLogLevelEnabled(logLevel))
-            log(logLevel, MessageFormatter.arrayFormat(s, objects).getMessage());
+            log(logLevel, Formatter.arrayFormat(s, objects));
     }
 
     public void log(LogLevel logLevel, Throwable throwable) {
@@ -211,101 +201,12 @@ public class Logger extends MarkerIgnoringBase {
         if (throwable == null)
             log(logLevel, s);
         else if (SakuraLogger.isLogLevelEnabled(logLevel))
-            log(logLevel, MessageFormatter.format("{}\n{}", s, LoggerUtils.getStackTraceAsString(throwable)).getMessage());
+            log(logLevel, Formatter.format("{}\n{}", s, LoggerUtils.getStackTraceAsString(throwable)));
     }
 
     public void log(LogLevel logLevel, String s, Throwable ex, Object... o) {
         if (SakuraLogger.isLogLevelEnabled(logLevel))
-            log(logLevel, MessageFormatter.arrayFormat(s, o).getMessage() + "\n" + LoggerUtils.getStackTraceAsString(ex));
-    }
-    //endregion
-
-    //region slf4j format method
-    @Override
-    public void trace(String s, Object o) {
-        if (isTraceEnabled())
-            trace(MessageFormatter.format(s, o).getMessage());
-    }
-
-    @Override
-    public void trace(String s, Object o, Object o1) {
-        if (isTraceEnabled())
-            trace(MessageFormatter.format(s, o, o1).getMessage());
-    }
-
-    @Override
-    public void debug(String s, Object o) {
-        if (isDebugEnabled())
-            debug(MessageFormatter.format(s, o).getMessage());
-    }
-
-    @Override
-    public void debug(String s, Object o, Object o1) {
-        if (isDebugEnabled())
-            debug(MessageFormatter.format(s, o, o1).getMessage());
-    }
-
-    @Override
-    public void info(String s, Object o) {
-        if (isInfoEnabled())
-            info(MessageFormatter.format(s, o).getMessage());
-    }
-
-    @Override
-    public void info(String s, Object o, Object o1) {
-        if (isInfoEnabled())
-            info(MessageFormatter.format(s, o, o1).getMessage());
-    }
-
-    @Override
-    public void warn(String s, Object o) {
-        if (isWarnEnabled())
-            warn(MessageFormatter.format(s, o).getMessage());
-    }
-
-    @Override
-    public void warn(String s, Object o, Object o1) {
-        if (isWarnEnabled())
-            warn(MessageFormatter.format(s, o, o1).getMessage());
-    }
-
-    @Override
-    public void error(String s, Object o) {
-        if (isErrorEnabled())
-            error(MessageFormatter.format(s, o).getMessage());
-    }
-
-    @Override
-    public void error(String s, Object o, Object o1) {
-        if (isErrorEnabled())
-            error(MessageFormatter.format(s, o, o1).getMessage());
-    }
-    //endregion
-
-    //region slf4j isLevelEnabled
-    @Override
-    public boolean isTraceEnabled() {
-        return SakuraLogger.isLogLevelEnabled(LogLevel.TRACE);
-    }
-
-    @Override
-    public boolean isDebugEnabled() {
-        return SakuraLogger.isLogLevelEnabled(LogLevel.DEBUG);
-    }
-
-    @Override
-    public boolean isInfoEnabled() {
-        return SakuraLogger.isLogLevelEnabled(LogLevel.INFO);
-    }
-
-    @Override
-    public boolean isWarnEnabled() {
-        return SakuraLogger.isLogLevelEnabled(LogLevel.WARN);
-    }
-
-    @Override
-    public boolean isErrorEnabled() {
-        return SakuraLogger.isLogLevelEnabled(LogLevel.ERROR);
+            log(logLevel, Formatter.arrayFormat(s, o) + "\n" + LoggerUtils.getStackTraceAsString(ex));
     }
     //endregion
 }
