@@ -125,62 +125,6 @@ public class Logger {
 
     //endregion
 
-    //region Exception format
-    public void trace(String s, Throwable throwable) {
-        if (throwable == null)
-            trace(s);
-        else if (SakuraLogger.isLogLevelEnabled(LogLevel.TRACE))
-            trace(Formatter.format("{}\n{}", s, LoggerUtils.getStackTraceAsString(throwable)));
-    }
-
-    public void debug(String s, Throwable throwable) {
-        if (throwable == null)
-            debug(s);
-        else if (SakuraLogger.isLogLevelEnabled(LogLevel.DEBUG))
-            debug(Formatter.format("{}\n{}", s, LoggerUtils.getStackTraceAsString(throwable)));
-    }
-
-    public void info(String s, Throwable throwable) {
-        if (throwable == null)
-            info(s);
-        else if (SakuraLogger.isLogLevelEnabled(LogLevel.INFO))
-            info(Formatter.format("{}\n{}", s, LoggerUtils.getStackTraceAsString(throwable)));
-    }
-
-    public void warn(String s, Throwable throwable) {
-        if (throwable == null)
-            warn(s);
-        else if (SakuraLogger.isLogLevelEnabled(LogLevel.WARN))
-            warn(Formatter.format("{}\n{}", s, LoggerUtils.getStackTraceAsString(throwable)));
-    }
-
-    public void error(String s, Throwable throwable) {
-        if (throwable == null)
-            error(s);
-        else if (SakuraLogger.isLogLevelEnabled(LogLevel.ERROR))
-            error(Formatter.format("{}\n{}", s, LoggerUtils.getStackTraceAsString(throwable)));
-    }
-
-    public void crit(String s, Throwable throwable) {
-        if (throwable == null)
-            crit(s);
-        else if (SakuraLogger.isLogLevelEnabled(LogLevel.CRIT))
-            crit(Formatter.format("{}\n{}", s, LoggerUtils.getStackTraceAsString(throwable)));
-    }
-    //endregion
-
-    //region Custom exception format
-    public void warn(String s, Throwable ex, Object... o) {
-        if (SakuraLogger.isLogLevelEnabled(LogLevel.WARN))
-            warn(Formatter.arrayFormat(s, o) + "\n" + LoggerUtils.getStackTraceAsString(ex));
-    }
-
-    public void error(String s, Throwable ex, Object... o) {
-        if (SakuraLogger.isLogLevelEnabled(LogLevel.ERROR))
-            error(Formatter.arrayFormat(s, o) + "\n" + LoggerUtils.getStackTraceAsString(ex));
-    }
-
-    //endregion
     //region Custom logLevel
     public void log(LogLevel logLevel, String s) {
         if (SakuraLogger.isLogLevelEnabled(logLevel))
@@ -195,18 +139,6 @@ public class Logger {
     public void log(LogLevel logLevel, Throwable throwable) {
         if (SakuraLogger.isLogLevelEnabled(logLevel))
             log(logLevel, LoggerUtils.getStackTraceAsString(throwable));
-    }
-
-    public void log(LogLevel logLevel, String s, Throwable throwable) {
-        if (throwable == null)
-            log(logLevel, s);
-        else if (SakuraLogger.isLogLevelEnabled(logLevel))
-            log(logLevel, Formatter.format("{}\n{}", s, LoggerUtils.getStackTraceAsString(throwable)));
-    }
-
-    public void log(LogLevel logLevel, String s, Throwable ex, Object... o) {
-        if (SakuraLogger.isLogLevelEnabled(logLevel))
-            log(logLevel, Formatter.arrayFormat(s, o) + "\n" + LoggerUtils.getStackTraceAsString(ex));
     }
     //endregion
 }
