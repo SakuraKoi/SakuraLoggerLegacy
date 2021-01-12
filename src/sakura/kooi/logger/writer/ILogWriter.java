@@ -7,7 +7,7 @@ import sakura.kooi.logger.utils.MinecraftColorFormatter;
 
 public interface ILogWriter {
     Logger logger = Logger.of("LogWriter");
-    LogLevel logLevel = new LogLevel("LOGGER", "§e", true);
+    LogLevel logLevel = LogLevel.register("LOGGER", "§e", true);
 
     void write(LogLevel level, String module, String message);
 
