@@ -18,42 +18,67 @@ import java.util.HashMap;
 import java.util.LinkedList;
 
 public class SakuraLogger {
-    protected static final HashMap<LogLevel, Boolean> logLevel = new HashMap<>();
+    public static final SakuraLogger INSTANCE = new SakuraLogger();
+
+    protected HashMap<LogLevel, Boolean> logLevel;
     @Getter
-    protected static LinkedList<IPreprocessor> preprocessors = new LinkedList<>();
+    protected LinkedList<IPreprocessor> preprocessors;
 
     @Getter @Setter
-    private static ILogFormatter formatter = new DefaultLogFormatter();
+    private ILogFormatter formatter;
     @Getter @Setter
-    private static ILogWriter writer = new ConsoleLogWriter();
+    private ILogWriter writer;
     @Getter
-    private static ILogQueue logQueue = new BlockingLogQueue();
+    private ILogQueue logQueue;
 
     @Getter @Setter
-    private static boolean supportOverlap = false;
+    private boolean supportOverlap = false;
 
     private static final LogLevel LEVEL_CONTROL = LogLevel.register("CTRL", "", true);
 
-    public static void enableColorSupport() {
+
+    public SakuraLogger() {
+        logLevel = new HashMap<>();
+        preprocessors = new LinkedList<>();
+        formatter = new DefaultLogFormatter();
+        writer = new ConsoleLogWriter();
+        logQueue = new BlockingLogQueue();
+    }
+
+    public SakuraLogger(SakuraLogger from) {
+        this();
+        this.logLevel.putAll(from.logLevel);
+        this.preprocessors.addAll(from.preprocessors);
+        this.formatter = from.formatter;
+        this.writer = from.writer;
+        this.logQueue = from.logQueue;
+        this.supportOverlap = from.supportOverlap;
+    }
+
+    public void enableColorSupport() {
         if (!LoggerUtils.runningInIdea()) {
             AnsiConsole.systemInstall();
         }
     }
 
-    public static void enableAsyncPrinting() {
+    public void enableAsyncPrinting() {
         if (logQueue instanceof AsyncLogQueue) return;
         logQueue = new AsyncLogQueue();
     }
 
-    public static void clearScreen() {
-        logQueue.log("Logger", LEVEL_CONTROL, Ansi.ansi().eraseScreen().toString());
+    public void clearScreen() {
+        logQueue.log(this, "Logger", LEVEL_CONTROL, Ansi.ansi().eraseScreen().toString());
     }
 
-    public static boolean isLogLevelEnabled(LogLevel level) {
+    public boolean isLogLevelEnabled(LogLevel level) {
         return logLevel.computeIfAbsent(level, LogLevel::isEnableByDefault);
     }
 
-    public static void setLogLevelEnabled(LogLevel level, boolean enabled) {
+    public void setLogLevelEnabled(LogLevel level, boolean enabled) {
         logLevel.put(level, enabled);
+    }
+
+    public SakuraLogger copy() {
+        return new SakuraLogger(this);
     }
 }

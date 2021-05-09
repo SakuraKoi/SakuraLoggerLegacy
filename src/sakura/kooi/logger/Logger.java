@@ -1,6 +1,7 @@
 package sakura.kooi.logger;
 
 import lombok.Getter;
+import lombok.Setter;
 import org.fusesource.jansi.Ansi;
 import sakura.kooi.logger.preprocesser.IPreprocessor;
 import sakura.kooi.logger.utils.Formatter;
@@ -15,8 +16,10 @@ import java.util.concurrent.ConcurrentMap;
 public class Logger {
     private static ConcurrentMap<String, Logger> loggerMap = new ConcurrentHashMap<>();
 
+    @Getter @Setter
+    private SakuraLogger backend = SakuraLogger.INSTANCE;
     static {
-        SakuraLogger.getWriter(); // force initialize SakuraLogger class
+        SakuraLogger dummy = SakuraLogger.INSTANCE; // force initialize SakuraLogger class
     }
 
     private final HashMap<LogLevel, Boolean> logLevel = new HashMap<>();
@@ -27,8 +30,11 @@ public class Logger {
 
     private Logger(final String module) {
         this.module = module;
-        logLevel.putAll(SakuraLogger.logLevel); // clone from global settings
-        preprocessors.addAll(SakuraLogger.preprocessors);
+        //noinspection ConstantConditions
+        if (backend != null) {
+            logLevel.putAll(backend.logLevel);
+            preprocessors.addAll(backend.preprocessors);
+        }
     }
 
     public static Logger of(final String module) {
@@ -40,7 +46,7 @@ public class Logger {
     }
 
     public void overlap() {
-        if (SakuraLogger.isSupportOverlap())
+        if (backend.isSupportOverlap())
             System.out.print(Ansi.ansi().cursorUpLine().eraseLine(Ansi.Erase.ALL).toString());
     }
 
@@ -158,7 +164,7 @@ public class Logger {
                 s = preprocessor.preprocess(s);
             }
             if (s == null || s.isEmpty()) return;
-            SakuraLogger.getLogQueue().log(module, logLevel, s);
+            backend.getLogQueue().log(backend, module, logLevel, s);
         }
     }
 

@@ -148,27 +148,27 @@ public class Slf4jLoggerBridge extends MarkerIgnoringBase {
     //region slf4j isLevelEnabled
     @Override
     public boolean isTraceEnabled() {
-        return SakuraLogger.isLogLevelEnabled(LogLevel.TRACE);
+        return SakuraLogger.INSTANCE.isLogLevelEnabled(LogLevel.TRACE);
     }
 
     @Override
     public boolean isDebugEnabled() {
-        return SakuraLogger.isLogLevelEnabled(LogLevel.DEBUG);
+        return SakuraLogger.INSTANCE.isLogLevelEnabled(LogLevel.DEBUG);
     }
 
     @Override
     public boolean isInfoEnabled() {
-        return SakuraLogger.isLogLevelEnabled(LogLevel.INFO);
+        return SakuraLogger.INSTANCE.isLogLevelEnabled(LogLevel.INFO);
     }
 
     @Override
     public boolean isWarnEnabled() {
-        return SakuraLogger.isLogLevelEnabled(LogLevel.WARN);
+        return SakuraLogger.INSTANCE.isLogLevelEnabled(LogLevel.WARN);
     }
 
     @Override
     public boolean isErrorEnabled() {
-        return SakuraLogger.isLogLevelEnabled(LogLevel.ERROR);
+        return SakuraLogger.INSTANCE.isLogLevelEnabled(LogLevel.ERROR);
     }
     //endregion
 }

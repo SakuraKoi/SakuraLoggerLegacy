@@ -1,7 +1,5 @@
 package sakura.kooi.logger.utils;
 
-import sakura.kooi.logger.Logger;
-
 import java.util.HashMap;
 import java.util.Map;
 
@@ -30,7 +28,7 @@ public class Formatter {
      *          The argument to be substituted in place of the formatting anchor
      * @return The formatted message
      */
-    final public static String format(String messagePattern, Object arg) {
+    public static String format(String messagePattern, Object arg) {
         return arrayFormat(messagePattern, new Object[] { arg });
     }
 
@@ -57,12 +55,12 @@ public class Formatter {
      *          anchor
      * @return The formatted message
      */
-    final public static String format(final String messagePattern, Object arg1, Object arg2) {
+    public static String format(final String messagePattern, Object arg1, Object arg2) {
         return arrayFormat(messagePattern, new Object[] { arg1, arg2 });
     }
 
 
-    final public static String arrayFormat(final String messagePattern, final Object[] argArray) {
+    public static String arrayFormat(final String messagePattern, final Object[] argArray) {
         Throwable throwableCandidate = getThrowableCandidate(argArray);
         Object[] args = argArray;
         if (throwableCandidate != null) {
@@ -70,7 +68,7 @@ public class Formatter {
         }
         return arrayFormat(messagePattern, args, throwableCandidate);
     }
-    final public static String arrayFormat(final String messagePattern, final Object[] argArray, Throwable throwable) {
+    public static String arrayFormat(final String messagePattern, final Object[] argArray, Throwable throwable) {
         if (messagePattern == null) {
             return null;
         }
@@ -129,25 +127,17 @@ public class Formatter {
         return sbuf.toString();
     }
 
-    final static boolean isEscapedDelimeter(String messagePattern, int delimeterStartIndex) {
+    static boolean isEscapedDelimeter(String messagePattern, int delimeterStartIndex) {
 
         if (delimeterStartIndex == 0) {
             return false;
         }
         char potentialEscape = messagePattern.charAt(delimeterStartIndex - 1);
-        if (potentialEscape == ESCAPE_CHAR) {
-            return true;
-        } else {
-            return false;
-        }
+        return potentialEscape == ESCAPE_CHAR;
     }
 
-    final static boolean isDoubleEscaped(String messagePattern, int delimeterStartIndex) {
-        if (delimeterStartIndex >= 2 && messagePattern.charAt(delimeterStartIndex - 2) == ESCAPE_CHAR) {
-            return true;
-        } else {
-            return false;
-        }
+    static boolean isDoubleEscaped(String messagePattern, int delimeterStartIndex) {
+        return delimeterStartIndex >= 2 && messagePattern.charAt(delimeterStartIndex - 2) == ESCAPE_CHAR;
     }
 
     // special treatment of array values was suggested by 'lizongbo'

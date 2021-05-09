@@ -15,7 +15,7 @@ public class AsyncLogQueue implements ILogQueue {
             thread.interrupt();
             try {
                 Thread.sleep(500L);
-            } catch (InterruptedException e) {}
+            } catch (InterruptedException ignored) {}
             for (Runnable log : queue) {
                 log.run();
             }
@@ -23,12 +23,12 @@ public class AsyncLogQueue implements ILogQueue {
     }
 
     @Override
-    public void log(String module, LogLevel level, String message) {
+    public void log(SakuraLogger backend, String module, LogLevel level, String message) {
         queue.add(() -> {
             for (String msg : message.split("\n")) {
-                String formatted = SakuraLogger.getFormatter().format(level, module, msg);
+                String formatted = backend.getFormatter().format(level, module, msg);
                 if (formatted == null) continue;
-                SakuraLogger.getWriter().write(level, module, formatted);
+                backend.getWriter().write(level, module, formatted);
             }
         });
     }
